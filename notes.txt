@@ -1,0 +1,25 @@
+- sensitividade alta significa que ŷ=1 => y=1
+- specificidade alta significa que ŷ=0 => y=0
+
+			Actually Positive	Actually False
+Predicted Positive	True Positive (TP)	False Positive (FP)
+Predicted Negative	False Negatives (FN)	True Negatives (TP)
+
+- sensitivity = TP/(TP + FN) -> true positive rate (TPR) or recall
+
+- specificity = TN/(TN + FP) -> true negative rate (TNR)
+	or
+  specificity = TP/(TP + FP) -> positive predictive value (PPV) or precision
+
+-------------------------------------------------------
+
+F1-score - 1/(1/2)*(1/recall + 1/precision)
+
+Exemplo: para um sistema de segurança de um avião é muito mais importante maximizar sensitividade do que especificidade.
+
+Exemplo: num jugamento de um assassinato um falso positivo pode levar a condenar uma pessoa inocente. Portanto, a especificidade é mais importante.
+
+-------------------------------------------------------
+
+- ROC faz um gráfico da sensitividade X (1 - especificidade)
+- gráfico de precisão X recall
