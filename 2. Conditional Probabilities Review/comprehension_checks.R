@@ -1,3 +1,38 @@
+library(dslabs)
+library(caret)
+library(ggplot2)
+library(dplyr)
+library(purrr)
+library(lubridate)
+
+
+set.seed(1)
+disease <- sample(c(0,1), size=1e6, replace=TRUE, prob=c(0.98,0.02))
+test <- rep(NA, 1e6)
+test[disease==0] <- sample(c(0,1), size=sum(disease==0), replace=TRUE, prob=c(0.90,0.10))
+test[disease==1] <- sample(c(0,1), size=sum(disease==1), replace=TRUE, prob=c(0.15, 0.85))
+
+prob_test_positive <- mean(test == 1)
+cat('prob. that test is positive is', prob_test_positive)
+cat('prob. that test is negative is', 1 - prob_test_positive)
+
+cat('prob. that one has disease if test is negative.', 0.15 * 0.02 / (1 - 0.85 * 0.02 / 0.15))
+cat('prob. that one has disease if test is negative.', mean(disease[test == 0]) )
+cat('prob. that one has disease if test is positive.', mean(disease[test == 1]))
+
+cat('If the test is positive, the relative risk of having the disease is', mean(disease[test == 1]) / 0.02)
+
+
+
+
+
+
+
+
+
+
+# ====================================================================================
+
 set.seed(1)
 disease <- sample(c(0,1), size=1e6, replace=TRUE, prob=c(0.98,0.02))
 test <- rep(NA, 1e6)

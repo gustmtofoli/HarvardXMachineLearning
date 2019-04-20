@@ -2,6 +2,47 @@
 library(caret)
 library(tidyverse)
 
+## Question 1
+set.seed(1)
+n <- 100
+Sigma <- 9*matrix(c(1.0, 0.5, 0.5, 1.0), 2, 2)
+dat <- MASS::mvrnorm(n = 100, c(69,69), Sigma) %>%
+  data.frame() %>% setNames(c("x", "y"))
+
+set.seed(1)
+cal_RMSE <- replicate(n = 100,
+                      {
+                        test_index <- createDataPartition(y, times = 1, p = 0.5, list = FALSE)
+                        train_set <- dat %>% slice(-test_index)
+                        test_set <- dat %>% slice(test_index)
+                        
+                        linear_model <- lm(y ~ x, data = train_set)
+                        y_hat <- predict(linear_model, test_set)
+                        RMSE <- sqrt(mean((y_hat - test_set$y)^2))
+                      })
+mean(cal_RMSE)
+sd(cal_RMSE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ============================================================================
+
 # Question 1
 
 y_rmse <- c(1:100)
@@ -34,70 +75,52 @@ y_rmse
 mean(y_rmse)
 sd(y_rmse)
 
-# Question 2 
-
+## Question 2
 set.seed(1)
-
-myRMSE <- function(size)
-{
-  set.seed(1)
+cal_RMSE <- function(size) {
   Sigma <- 9*matrix(c(1.0, 0.5, 0.5, 1.0), 2, 2)
-  dat <- MASS::mvrnorm(n = size, c(69, 69), Sigma) %>%
-    data.frame() %>% setNames(c("x", "y"))
+  dat <- MASS::mvrnorm(n = size, c(69,69), Sigma) %>% data.frame() %>% setNames(c("x", "y"))
+  RMSEs <- replicate(n = 100,
+                     {
+                       test_index <- createDataPartition(dat$y, times = 1, p = 0.5, list = FALSE)
+                       train_set <- dat %>% slice(-test_index)
+                       test_set <- dat %>% slice(test_index)
+                       
+                       linear_model <- lm(y ~ x, data = train_set)
+                       y_hat <- predict(linear_model, test_set)
+                       RMSE <- sqrt(mean((y_hat - test_set$y)^2))
+                     })
   
-  
-  RMSE <- replicate(n = size, {
-    
-    test_index <- createDataPartition(dat$y, times = 1, p = 0.5, list = FALSE)
-    
-    train_set <- dat %>% slice(-test_index)
-    test_set <- dat %>% slice(test_index)
-    
-    # Train linear model
-    fit <- lm(y ~ x, data = train_set)
-    
-    # Loss Function
-    y_hat <- predict(fit, test_set)
-    sqrt(mean((y_hat - test_set$y)^2))
-  })
-  list(mean(RMSE),sd(RMSE))
+  cat("the mean RMSE for n =", size, "is ", mean(RMSEs), "\n")
+  cat("the sd RMSE for n =", size, "is ", sd(RMSEs), "\n", "\n")
 }
 
 n <- c(100, 500, 1000, 5000, 10000)
-set.seed(1)
-f<-sapply(n, myRMSE)
-f
+sapply(n, cal_RMSE)
+
 
 # Question 4
 
-myRMSE <- function(size)
-{
-  set.seed(1)
-  Sigma <- 9*matrix(c(1.0, 0.95, 0.95, 1.0), 2, 2)
-  dat <- MASS::mvrnorm(n = size, c(69, 69), Sigma) %>%
-    data.frame() %>% setNames(c("x", "y"))
-  
-  RMSE <- replicate(n = size, {
-    
-    test_index <- createDataPartition(dat$y, times = 1, p = 0.5, list = FALSE)
-    
-    train_set <- dat %>% slice(-test_index)
-    test_set <- dat %>% slice(test_index)
-    
-    # Train linear model
-    fit <- lm(y ~ x, data = train_set)
-    
-    # Loss Function
-    y_hat <- predict(fit, test_set)
-    sqrt(mean((y_hat - test_set$y)^2))
-  })
-  list(mean(RMSE),sd(RMSE))
-}
-
-n <- c(100)
+## Question 4
 set.seed(1)
-f<-sapply(n, myRMSE)
-f
+n <- 100
+Sigma <- 9*matrix(c(1.0, 0.95, 0.95, 1.0), 2, 2)
+dat <- MASS::mvrnorm(n = 100, c(69, 69), Sigma) %>%
+  data.frame() %>% setNames(c("x", "y"))
+
+set.seed(1)
+cal_RMSE <- replicate(n = 100,
+                      {
+                        test_index <- createDataPartition(dat$y, times = 1, p = 0.5, list = FALSE)
+                        train_set <- dat %>% slice(-test_index)
+                        test_set <- dat %>% slice(test_index)
+                        linear_model <- lm(y ~ x, data = train_set)
+                        y_hat <- predict(linear_model, test_set)
+                        RMSE <- sqrt(mean((y_hat - test_set$y)^2))
+                      })
+mean(cal_RMSE)
+sd(cal_RMSE)
+histogram(cal_RMSE)
 
 # Question 6
 set.seed(1)
@@ -151,4 +174,30 @@ dat <- make_data()
 dat$train %>% ggplot(aes(x, color = y)) + geom_density()
 
 delta <- seq(0, 3, len=25)
+
+
+
+## Question 8
+set.seed(1)
+n <- 1000
+Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.95, 0.75, 0.95, 1.0), 3, 3)
+dat <- MASS::mvrnorm(n = 100, c(0, 0, 0), Sigma) %>%
+  data.frame() %>% setNames(c("y", "x_1", "x_2"))
+
+set.seed(1)
+test_index <- createDataPartition(dat$y, times = 1, p = 0.5, list = FALSE)
+train_set <- dat %>% slice(-test_index)
+test_set <- dat %>% slice(test_index)
+
+fit <- lm(y ~ x_1, data = train_set)
+y_hat <- predict(fit, newdata = test_set)
+sqrt(mean((y_hat-test_set$y)^2))
+
+fit <- lm(y ~ x_2, data = train_set)
+y_hat <- predict(fit, newdata = test_set)
+sqrt(mean((y_hat-test_set$y)^2))
+
+fit <- lm(y ~ x_1 + x_2, data = train_set)
+y_hat <- predict(fit, newdata = test_set)
+sqrt(mean((y_hat-test_set$y)^2))
   
