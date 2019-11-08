@@ -1,6 +1,6 @@
 library(tidyverse)
 library(purrr)
-# sudo add-apt-repository -y ppa:opencpu/poppler
+# sudo add-apt-repository -y ppa:cran/poppler
 # sudo apt-get update
 # sudo sudo apt-get install -y libpoppler-cpp-dev
 library(pdftools)
